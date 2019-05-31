@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Animation
+  m_Name: HumanAnimation
   m_Shader: {fileID: -6465566751694194690, guid: 3b2ee68170b061848bc81192c2ff342d,
     type: 3}
   m_ShaderKeywords: 
@@ -21,20 +21,21 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - Texture2D_A69FC623:
-        m_Texture: {fileID: 2800000, guid: 8528348933d922443b1194b701aeeb5b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 40472c96f96698248872915be3721096, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_1B0F6A87: 3.64
-    - Vector1_1EE9FA41: 24
-    - Vector1_49EAE63B: 30
+    - Vector1_1EE9FA41: 5535
+    - Vector1_49EAE63B: 1
+    - Vector1_7A8AE8AB: 1
     - Vector1_BB0A8848: 1
-    - Vector1_CF3B2518: 59
+    - Vector1_CF3B2518: 25
     - Vector1_E15A922: 0
     - _VertexCount: 0
     m_Colors:
     - Vector2_78D0D588: {r: 0.00924514, g: 0.04640787, b: 0.006545126, a: 0}
     - Vector2_87036AA2: {r: 0.25, g: 0.25, b: 0, a: 0}
-    - Vector3_288ED983: {r: 5, g: 11.16025, b: 9.330126, a: 0}
-    - Vector3_D9E22CB1: {r: -5, g: -2.5, b: -4.330126, a: 0}
+    - Vector3_288ED983: {r: 3, g: 10, b: 3, a: 0}
+    - Vector3_D9E22CB1: {r: -3, g: -1, b: -3, a: 0}
     - Vector4_7800C18A: {r: -0.008963374, g: -0.0009943172, b: 0, a: 0}

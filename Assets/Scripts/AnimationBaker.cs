@@ -30,10 +30,18 @@ public class AnimationBaker : MonoBehaviour
 	[SerializeField]
 	private float boundsMultiplier = 1f;
 
+	[SerializeField]
+	private Vector3 customMinBound = Vector3.zero;
+
+	[SerializeField]
+	private Vector3 customMaxBound = Vector3.zero;
+
 	// -- //
 
 	private Mesh bakedMesh;
 	private Texture2D bakedTexture;
+
+	private int yPerFrame;
 
 	// -- //
 
@@ -85,12 +93,22 @@ public class AnimationBaker : MonoBehaviour
 			animator.playableGraph.Evaluate(fixedDT);
 		}
 
+		var rot   = skinnedMesh.transform.rotation;
+
+		// minBound = rot * minBound;
+		// maxBound = rot * maxBound;
+
+		Debug.Log("=====");
+		Debug.Log($"Miniest : {(minBound).ToString("0.0000000000")} | Maxiest : {(maxBound).ToString("0.0000000000")}");
+
 		animator.playableGraph.Evaluate(-((frame + 1) * fixedDT));
 
 		for(var i = 0; i < frame; ++i)
 		{
-			Bake(i, minBound, maxBound);
+			// Debug.Log("===== NEW BACK =====");
+			Bake(i, customMinBound, customMaxBound);
 			animator.playableGraph.Evaluate(fixedDT);
+			// Debug.Log("====================");
 		}
 
 		animator.playableGraph.Evaluate(-((frame + 1) * fixedDT));
@@ -112,7 +130,9 @@ public class AnimationBaker : MonoBehaviour
 	{
 		var vertCount = skinnedMesh.sharedMesh.vertexCount;
 		var xAxis = Mathf.Min(maxX, vertCount);
-		var yAxis = Mathf.RoundToInt((float) vertCount / (float) xAxis) * animDuration; // Animation duration
+
+		yPerFrame = Mathf.RoundToInt((float) vertCount / (float) xAxis);
+		var yAxis = yPerFrame * animDuration; // Animation duration
 
 		bakedMesh    = new Mesh();
 		bakedTexture = new Texture2D(xAxis, yAxis);
@@ -124,34 +144,38 @@ public class AnimationBaker : MonoBehaviour
 		Debug.Log(bakedTexture.width + " x " + bakedTexture.height);
 		Debug.Log(maxX);
 		Debug.Log(vertCount);
-		Debug.Log($"Bounds : MIN {skinnedMesh.localBounds.min.ToString("0.0000000000000000")} | MAX {skinnedMesh.localBounds.max.ToString("0.0000000000000000")}");
 	}
 
 	private void Bake(int frame, Vector3 minBound, Vector3 maxBound)
 	{
 		skinnedMesh.BakeMesh(bakedMesh);
 
-		var bound = skinnedMesh.localBounds;
+		// var bound = skinnedMesh.localBounds;
+		var rot   = skinnedMesh.transform.rotation;
 
-		bound.min = minBound * boundsMultiplier;
-		bound.max = maxBound * boundsMultiplier;
-
-		Debug.Log($"Min : {(bound.min).ToString("0.0000000000")} | Max : {(bound.max).ToString("0.0000000000")}");
+		// bound.min = minBound * boundsMultiplier;
+		// bound.max = maxBound * boundsMultiplier;
+		minBound = minBound * boundsMultiplier;
+		maxBound = maxBound * boundsMultiplier;
 
 		for(var i = 0; i < bakedMesh.vertexCount; ++i)
 		{
 			var width = bakedTexture.width;
 			var x = i % width;
-			var y = Mathf.FloorToInt((float) i / (float) width) + frame;
+			var y = Mathf.FloorToInt((float) i / (float) width) + (yPerFrame * frame);
 			var vertex = bakedMesh.vertices[i];
 
-			var vertXOffset = InverseLerp(bound.min.x, bound.max.x, vertex.x);
-			var vertYOffset = InverseLerp(bound.min.y, bound.max.y, vertex.y);
-			var vertZOffset = InverseLerp(bound.min.z, bound.max.z, vertex.z);
+			// vertex = rot * vertex;
+
+			var vertXOffset = InverseLerp(minBound.x, maxBound.x, vertex.x);
+			var vertYOffset = InverseLerp(minBound.y, maxBound.y, vertex.y);
+			var vertZOffset = InverseLerp(minBound.z, maxBound.z, vertex.z);
 
 			var color = new Color(vertXOffset, vertYOffset, vertZOffset, 1);
 
 			bakedTexture.SetPixel(x, y, color);
+
+			// Debug.Log($"V : {vertex.ToString("0.00000")} | C : {color.ToString("0.0000000")}");
 		}
 
 		bakedTexture.Apply();
